@@ -3,6 +3,8 @@
 #include <iostream>
 #include <math.h>
 #include <sys/time.h>
+#include<stdio.h>
+#include<stdlib.h>
 
 //DEFINES--------------------------------------------
 
@@ -33,6 +35,8 @@ GLfloat mov_x=PASSO, mov_z=0;
 GLint angulo=0;
 GLint wire = 0;
 GLint inicia = 0;
+GLint LookX = 0;
+GLint LookZ = 0;
 
 
 
@@ -43,10 +47,10 @@ GLint mapa[25][25] = { 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                        1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,
                        1,1,1,0,1,1,1,0,1,1,1,0,1,0,1,0,1,1,1,1,1,0,1,1,1,
                        1,0,1,0,0,0,1,0,1,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1,
-                       3,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,1,1,1,1,1,1,
+                       1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,1,1,1,1,1,1,
                        0,0,3,0,0,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,0,0,1,
                        1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,0,1,
-                       1,3,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,1,
+                       1,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,1,
                        1,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0,1,1,1,0,1,1,1,1,1,
                        1,0,0,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,1,0,0,0,0,0,1,
                        1,0,1,0,1,1,1,0,1,0,1,0,1,0,1,1,1,0,1,1,1,1,1,0,1,
@@ -54,7 +58,7 @@ GLint mapa[25][25] = { 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                        1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,
                        1,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,1,
                        1,0,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,
-                       1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,1,
+                       1,0,0,0,0,0,1,0,1,0,0,3,0,0,1,0,0,0,0,0,0,0,1,0,1,
                        1,1,1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,
                        1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,
                        1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,
@@ -63,7 +67,7 @@ GLint mapa[25][25] = { 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                        1,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,1,0,1,0,0,
                        1,0,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1,0,1,0,1,0,1,
                        1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,
-                       1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+		       1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
                      };
 
 //FUNCOES--------------------------------------------
@@ -119,8 +123,14 @@ void display(void)
         glLoadIdentity();// Carrega a identidade
 
         gluLookAt(jog_x,25,jog_z, jog_x+mov_x,25,jog_z+mov_z, 0,1,0); // (visão do personagem)
+	// Coordenadas X e Y que a camera tá após se mover.	
+	LookX = (int) (jog_x+mov_x);
+	LookZ = (int) (jog_z+mov_z);
 
-        glPushMatrix(); //
+	printf("X = %d\n", LookX);
+	printf("Z = %d\n", LookZ);
+        
+	glPushMatrix(); //
 
         glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_verde);
 
@@ -134,14 +144,25 @@ void display(void)
         glEnd();
 
         glPopMatrix();
-
+	
+	if(((LookX>=485) && (LookX<=510)) && ((LookZ >= 185)&&(LookZ<=210))){
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// limpa os pixels da tela
+		
+        	glLoadIdentity();// Carrega a identidade
+		glPushMatrix();
+        
+		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_verde);
+		glutSolidCube(TAM_BLOCO);
+		glPopMatrix();		
+		
+	}
 
 
         for(x=0; x < 25; x++)
         {
             for(z=0; z < 25; z++)
             {
-                if(mapa[x][z]) //tem um bloco
+                if(mapa[x][z]) //Verifica se há bloco:
                 {
                     x_mun = x * TAM_BLOCO;
                     z_mun = z * TAM_BLOCO;
@@ -157,10 +178,11 @@ void display(void)
 
                     int casa = mapa[x][z];
 
+		// Rasterizar uma bola na(s) posição(ões) 3 explícitas na matriz:
                     if(casa==3)
-                    {
-                        if(wire) glutWireSphere(50.0, 30,30);
-                        else glutSolidSphere(50.0,30,30);
+                    {	
+                        if(wire) glutWireSphere(10.0, 30,30);
+                        else glutSolidSphere(10.0,30,30);
                     }else{
                          if(wire) glutWireCube(TAM_BLOCO);
                          else glutSolidCube(TAM_BLOCO);
@@ -173,6 +195,7 @@ void display(void)
             }//for
         }//for
 
+	
         glutSwapBuffers();
         break;
     case 2:
