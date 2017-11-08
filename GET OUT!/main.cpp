@@ -1,3 +1,4 @@
+
 #include <GL/gl.h>
 #include <GL/glut.h>
 #include <iostream>
@@ -19,6 +20,8 @@
 
 
 //GLOBALS--------------------------------------------
+GLuint texture;
+GLuint texture2;
 
 GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
 GLfloat mat_shininess[] = { 50.0 };
@@ -93,6 +96,7 @@ int pode_mover(float pos_x, float pos_z, float vet_x, float vet_z)
 
 
 //---------------------------------------------------------------
+/*
 unsigned GetTickCount()
 {
     struct timeval tv;
@@ -101,6 +105,7 @@ unsigned GetTickCount()
 
     return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 }
+*/
 //---------------------------------------------------------------
 void display(void)
 {
@@ -123,41 +128,53 @@ void display(void)
         glLoadIdentity();// Carrega a identidade
 
         gluLookAt(jog_x,25,jog_z, jog_x+mov_x,25,jog_z+mov_z, 0,1,0); // (visão do personagem)
-	// Coordenadas X e Y que a camera tá após se mover.	
+	// Coordenadas X e Y que a camera tá após se mover.
 	LookX = (int) (jog_x+mov_x);
 	LookZ = (int) (jog_z+mov_z);
 
-	printf("X = %d\n", LookX);
-	printf("Z = %d\n", LookZ);
-        
-	glPushMatrix(); //
+	//printf("X = %d\n", LookX);
+	//printf("Z = %d\n", LookZ);
 
-        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_verde);
+
+
+	glPushMatrix(); //
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture( GL_TEXTURE_2D, texture);
+        //glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_verde);
+
+
 
         glBegin ( GL_QUADS);
 
+        glTexCoord2d(0.0,0.0);
         glVertex3f(-10000, -TAM_BLOCO/2, -10000);
+
+        glTexCoord2d(50.0,0.0);
         glVertex3f(-10000, -TAM_BLOCO/2, 10000);
+
+        glTexCoord2d(50.0,50.0);
         glVertex3f(10000, -TAM_BLOCO/2, 10000);
+
+        glTexCoord2d(0.0,50.0);
         glVertex3f(10000, -TAM_BLOCO/2, -10000);
 
         glEnd();
 
         glPopMatrix();
-	
+
 	if(((LookX>=485) && (LookX<=510)) && ((LookZ >= 185)&&(LookZ<=210))){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// limpa os pixels da tela
-		
-        	glLoadIdentity();// Carrega a identidade
+
+        glLoadIdentity();// Carrega a identidade
 		glPushMatrix();
-        
+
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_verde);
 		glutSolidCube(TAM_BLOCO);
-		glPopMatrix();		
-		
+		glPopMatrix();
+
 	}
 
-
+    glDisable( GL_TEXTURE_2D );
         for(x=0; x < 25; x++)
         {
             for(z=0; z < 25; z++)
@@ -180,7 +197,7 @@ void display(void)
 
 		// Rasterizar uma bola na(s) posição(ões) 3 explícitas na matriz:
                     if(casa==3)
-                    {	
+                    {
                         if(wire) glutWireSphere(10.0, 30,30);
                         else glutSolidSphere(10.0,30,30);
                     }else{
@@ -195,7 +212,7 @@ void display(void)
             }//for
         }//for
 
-	
+
         glutSwapBuffers();
         break;
     case 2:
@@ -205,7 +222,6 @@ void display(void)
         glLoadIdentity();// Carrega a identidade
 
         glutSolidCube(TAM_BLOCO);
-
         glutSwapBuffers();
         break;
 
@@ -341,7 +357,7 @@ void Inicializa(void)
     glEnable(GL_DEPTH_TEST);
 
 // inicializa numeros aleatorios
-    srand(GetTickCount());
+   // srand(GetTickCount());
     /*
      //posicao inicial da esfera
     g_esfera.x_pos = 3 * TAM_BLOCO;
@@ -349,7 +365,43 @@ void Inicializa(void)
     g_esfera.dir = LESTE;
     */
 }
+//---------------------------------------------------------------
+// Carregando Imagem para textura:
+ GLuint LoadTexture( const char * filename, int width, int height )
+{
+    GLuint texture;
+    unsigned char * data;
+    FILE * file;
 
+ //The following code will read in our RAW file
+    file = fopen( filename, "rb" );  //We need to open our file
+    if ( file == NULL ) return 0;  //If our file is empty, set our texture to empty
+
+
+    data = (unsigned char *)malloc( width * height * 3 ); //assign the nessecary memory for the texture
+
+
+    fread( data, width * height * 3, 1, file );  //read in our file
+    fclose( file ); //close our file, no point leaving it open
+
+    glGenTextures( 1, &texture ); //then we need to tell OpenGL that we are generating a texture
+    glBindTexture( GL_TEXTURE_2D, texture ); //now we bind the texture that we are working with
+    glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+    free( data ); //free the texture
+    return texture; //return the texture data
+}
+//---------------------------------------------------------------
+// Clean up
+void FreeTexture( GLuint texture )
+{
+  glDeleteTextures( 1, &texture );  //Delete our texture, simple enough.
+}
 //---------------------------------------------------------------
 void free_mem(void)
 {
@@ -365,6 +417,7 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutCreateWindow("Labirinto 3D");
     glutFullScreen();
+    texture = LoadTexture( "C:\\Users\\Ze Carlos\\Desktop\\teste\\obj\\foto4.bmp", 5456, 3632);
 
     Inicializa();
 
