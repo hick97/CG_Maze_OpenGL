@@ -417,7 +417,7 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutCreateWindow("Labirinto 3D");
     glutFullScreen();
-    texture = LoadTexture( "(Caminho até a foto).bmp", 5456, 3632); // Deve-se colocar o caminho até a foto com 2 "\\".
+    texture = LoadTexture( ""//home//ci//Downloads//CG_ProjectFinal-Test--master//GET OUT!//foto1.bmp", 5456, 3632); // Deve-se colocar o caminho até a foto com 2 "\\".
 
     Inicializa();
 
