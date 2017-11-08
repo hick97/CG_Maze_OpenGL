@@ -112,13 +112,33 @@ void display(void)
     switch(inicia)
     {
     case 0:
+	
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// limpa os pixels da tela
+ 	 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// limpa os pixels da tela
 
         glLoadIdentity();// Carrega a identidade
-
+	glEnable(GL_TEXTURE_2D);
+        glBindTexture( GL_TEXTURE_2D, texture);
+	glPushMatrix(); //
+	gluLookAt(0,0,1000,0,0,0,0,1,0); // (visão do personagem)
+	glBegin(GL_QUADS);
+	       glTexCoord2d(0.0,0.0);
+               glVertex3f(-1000.0,-1600.0,0.0);
+		glTexCoord2d(1.0,0.0);
+               glVertex3f(-1000.0,1600.0,0.0);
+		glTexCoord2d(1.0,1.0);
+ 	       glVertex3f(1000.0,1600.0,0.0);
+		glTexCoord2d(0.0,1.0);
+	       glVertex3f(1000.0,-1600.0,0.0);
+               // Especifica que a cor corrente é azul
+                         
+        glEnd();
+        //glutSolidCube(TAM_BLOCO);
+	//glPopMatrix(); //
         glutSwapBuffers();
+	glFlush();
         break;
+        
     case 1:
         int x, z;
         int x_mun, z_mun;
@@ -143,20 +163,20 @@ void display(void)
         //glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_verde);
 
 
-
+	//glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
         glBegin ( GL_QUADS);
 
         glTexCoord2d(0.0,0.0);
-        glVertex3f(-10000, -TAM_BLOCO/2, -10000);
+        glVertex3f(-10000, -50, -10000);
 
         glTexCoord2d(50.0,0.0);
-        glVertex3f(-10000, -TAM_BLOCO/2, 10000);
+        glVertex3f(-10000, -50, 10000);
 
         glTexCoord2d(50.0,50.0);
-        glVertex3f(10000, -TAM_BLOCO/2, 10000);
+        glVertex3f(10000, -50, 10000);
 
         glTexCoord2d(0.0,50.0);
-        glVertex3f(10000, -TAM_BLOCO/2, -10000);
+        glVertex3f(10000, -50, -10000);
 
         glEnd();
 
@@ -220,9 +240,26 @@ void display(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// limpa os pixels da tela
 
         glLoadIdentity();// Carrega a identidade
-
-        glutSolidCube(TAM_BLOCO);
+	glEnable(GL_TEXTURE_2D);
+        glBindTexture( GL_TEXTURE_2D, texture);
+	glPushMatrix(); //
+	gluLookAt(0,0,1000,0,0,0,0,1,0); // (visão do personagem)
+	glBegin(GL_QUADS);
+	       glTexCoord2d(0.0,0.0);
+               glVertex3f(-1000.0,-1600.0,0.0);
+		glTexCoord2d(1.0,0.0);
+               glVertex3f(-1000.0,1600.0,0.0);
+		glTexCoord2d(1.0,1.0);
+ 	       glVertex3f(1000.0,1600.0,0.0);
+		glTexCoord2d(0.0,1.0);
+	       glVertex3f(1000.0,-1600.0,0.0);
+               // Especifica que a cor corrente é azul
+                         
+        glEnd();
+        //glutSolidCube(TAM_BLOCO);
+	//glPopMatrix(); //
         glutSwapBuffers();
+	glFlush();
         break;
 
     }
@@ -412,13 +449,18 @@ void free_mem(void)
 int main(int argc, char **argv)
 {
     std::clog << "Begin...\n";
-
+    	
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(512,512);	
     glutCreateWindow("Labirinto 3D");
-    glutFullScreen();
-    texture = LoadTexture( ""//home//ci//Downloads//CG_ProjectFinal-Test--master//GET OUT!//foto1.bmp", 5456, 3632); // Deve-se colocar o caminho até a foto com 2 "\\".
-
+    //glutFullScreen();
+    texture = LoadTexture( "//home//ci//Downloads//CG_ProjectFinal-Test--master//GET OUT!//foto1.bmp", 1600, 1000); // Deve-se colocar o caminho até a foto com 2 "\\".
+	if(texture==0){
+		printf("Erro ao carregar\n");
+	}else{
+		printf("Carregou!");
+	}	
     Inicializa();
 
     glutDisplayFunc(display);
@@ -430,4 +472,3 @@ int main(int argc, char **argv)
 
     return 0;
 }
-
