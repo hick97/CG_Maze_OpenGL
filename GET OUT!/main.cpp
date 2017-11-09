@@ -50,7 +50,7 @@ GLint mapa[25][25] = { 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                        1,1,1,0,1,1,1,0,1,1,1,0,1,0,1,0,1,1,1,1,1,0,1,1,1,
                        1,0,1,0,0,0,1,0,1,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1,
                        1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,1,1,1,1,1,1,
-                       0,0,3,0,0,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,0,0,1,
+                       2,0,3,0,0,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,0,0,1,
                        1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,0,1,
                        1,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,1,
                        1,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0,1,1,1,0,1,1,1,1,1,
@@ -83,7 +83,7 @@ int pode_mover(float pos_x, float pos_z, float vet_x, float vet_z)
 
     int casa = mapa[ind_x][ind_z];
 
-    if(casa == 3){
+    if(casa == 3 || casa==2){
         return 1;
     }else if(casa){
         return 0;
@@ -123,13 +123,13 @@ void display(void)
 	
 	glBegin(GL_QUADS);// Carrega nossa textura 1000 x 1600.
 		glTexCoord2d(0.0,0.0);
-               	glVertex3f(-1000.0,-1600.0,0.0);
+               	glVertex3f(-1500.0,-1500.0,0.0);
 		glTexCoord2d(1.0,0.0);
-               	glVertex3f(-1000.0,1600.0,0.0);
+               	glVertex3f(-1500.0,1500.0,0.0);
 		glTexCoord2d(1.0,1.0);
- 	       	glVertex3f(1000.0,1600.0,0.0);
+ 	       	glVertex3f(1500.0,1500.0,0.0);
 		glTexCoord2d(0.0,1.0);
-	       	glVertex3f(1000.0,-1600.0,0.0);     
+	       	glVertex3f(1500.0,-1500.0,0.0);     
                          
         glEnd();
         glutSwapBuffers();
@@ -201,7 +201,7 @@ void display(void)
  	        glVertex3f(1000.0,1600.0,0.0);
 		glTexCoord2d(0.0,1.0);
 	        glVertex3f(1000.0,-1600.0,0.0);
-               // Especifica que a cor corrente é azul
+           
                          
 		glEnd();
 		
@@ -232,12 +232,33 @@ void display(void)
 
                     int casa = mapa[x][z];
 
-		// Rasterizar uma bola na(s) posição(ões) 3 explícitas na matriz:
+		// Rasterizar uma bola na(s) posição(ões) "3" explícitas na matriz:
                     if(casa==3)
                     {
                         if(wire) glutWireSphere(10.0, 30,30);
                         else glutSolidSphere(10.0,30,30);
-                    }else{
+                    }else if(casa==2){
+		    	glPushMatrix(); //
+			
+			
+			glBegin ( GL_QUADS);
+
+			glTexCoord2d(0.0,0.0);
+			glVertex3f(-50, -10, -1);
+
+			glTexCoord2d(50.0,0.0);
+			glVertex3f(-50, -10, 1);
+
+			glTexCoord2d(50.0,50.0);
+			glVertex3f(50, -10, 1);
+
+			glTexCoord2d(0.0,50.0);
+			glVertex3f(50, -10, -1);
+
+			glEnd();
+			glPopMatrix();
+		
+		    }else{
                          if(wire) glutWireCube(TAM_BLOCO);
                          else glutSolidCube(TAM_BLOCO);
                     }
@@ -263,14 +284,14 @@ void display(void)
 	gluLookAt(0,0,1000,0,0,0,0,1,0); // (visão do personagem)
 	glBegin(GL_QUADS);
 	       glTexCoord2d(0.0,0.0);
-               glVertex3f(-1000.0,-1600.0,0.0);
+               glVertex3f(-1500.0,-1500.0,0.0);
 		glTexCoord2d(1.0,0.0);
-               glVertex3f(-1000.0,1600.0,0.0);
+               glVertex3f(-1500.0,1500.0,0.0);
 		glTexCoord2d(1.0,1.0);
- 	       glVertex3f(1000.0,1600.0,0.0);
+ 	       glVertex3f(1500.0,1500.0,0.0);
 		glTexCoord2d(0.0,1.0);
-	       glVertex3f(1000.0,-1600.0,0.0);
-               // Especifica que a cor corrente é azul
+	       glVertex3f(1500.0,-1500.0,0.0);
+               
                          
         glEnd();
         //glutSolidCube(TAM_BLOCO);
