@@ -1,4 +1,3 @@
-
 #include <GL/gl.h>
 #include <GL/glut.h>
 #include <iostream>
@@ -113,28 +112,26 @@ void display(void)
     {
     case 0:
 	
-
- 	 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// limpa os pixels da tela
-
-        glLoadIdentity();// Carrega a identidade
-	glEnable(GL_TEXTURE_2D);
-        glBindTexture( GL_TEXTURE_2D, texture);
+ 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// limpa os pixels da tela
+	glLoadIdentity();// Carrega a identidade
+	
+	glEnable(GL_TEXTURE_2D); // Ativa a aplicação de textura.
+        glBindTexture( GL_TEXTURE_2D, texture2);// Define qual textura queremos aplicar.
+	
 	glPushMatrix(); //
 	gluLookAt(0,0,1000,0,0,0,0,1,0); // (visão do personagem)
-	glBegin(GL_QUADS);
-	       glTexCoord2d(0.0,0.0);
-               glVertex3f(-1000.0,-1600.0,0.0);
+	
+	glBegin(GL_QUADS);// Carrega nossa textura 1000 x 1600.
+		glTexCoord2d(0.0,0.0);
+               	glVertex3f(-1000.0,-1600.0,0.0);
 		glTexCoord2d(1.0,0.0);
-               glVertex3f(-1000.0,1600.0,0.0);
+               	glVertex3f(-1000.0,1600.0,0.0);
 		glTexCoord2d(1.0,1.0);
- 	       glVertex3f(1000.0,1600.0,0.0);
+ 	       	glVertex3f(1000.0,1600.0,0.0);
 		glTexCoord2d(0.0,1.0);
-	       glVertex3f(1000.0,-1600.0,0.0);
-               // Especifica que a cor corrente é azul
+	       	glVertex3f(1000.0,-1600.0,0.0);     
                          
         glEnd();
-        //glutSolidCube(TAM_BLOCO);
-	//glPopMatrix(); //
         glutSwapBuffers();
 	glFlush();
         break;
@@ -151,7 +148,7 @@ void display(void)
 	// Coordenadas X e Y que a camera tá após se mover.
 	LookX = (int) (jog_x+mov_x);
 	LookZ = (int) (jog_z+mov_z);
-
+	//printf's permitem ver tais coordenadas, para posteriormente aplicar textura:
 	//printf("X = %d\n", LookX);
 	//printf("Z = %d\n", LookZ);
 
@@ -181,16 +178,36 @@ void display(void)
         glEnd();
 
         glPopMatrix();
+	
+	// Condições que permitem aplicar textura quando passar pela bola ("DICA"):
+
+	// Bola 1:
 
 	if(((LookX>=485) && (LookX<=510)) && ((LookZ >= 185)&&(LookZ<=210))){
+		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// limpa os pixels da tela
 
-        glLoadIdentity();// Carrega a identidade
-		glPushMatrix();
-
-		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_verde);
-		glutSolidCube(TAM_BLOCO);
-		glPopMatrix();
+		glLoadIdentity();// Carrega a identidade
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture( GL_TEXTURE_2D, texture);
+		glPushMatrix(); //
+		gluLookAt(0,0,1000,0,0,0,0,1,0); // (visão do personagem)
+		glBegin(GL_QUADS);
+	        glTexCoord2d(0.0,0.0);
+                glVertex3f(-1000.0,-1600.0,0.0);
+		glTexCoord2d(1.0,0.0);
+                glVertex3f(-1000.0,1600.0,0.0);
+		glTexCoord2d(1.0,1.0);
+ 	        glVertex3f(1000.0,1600.0,0.0);
+		glTexCoord2d(0.0,1.0);
+	        glVertex3f(1000.0,-1600.0,0.0);
+               // Especifica que a cor corrente é azul
+                         
+		glEnd();
+		
+		glutSwapBuffers();
+		glFlush();
+		break;
 
 	}
 
@@ -241,7 +258,7 @@ void display(void)
 
         glLoadIdentity();// Carrega a identidade
 	glEnable(GL_TEXTURE_2D);
-        glBindTexture( GL_TEXTURE_2D, texture);
+        glBindTexture( GL_TEXTURE_2D, texture2);
 	glPushMatrix(); //
 	gluLookAt(0,0,1000,0,0,0,0,1,0); // (visão do personagem)
 	glBegin(GL_QUADS);
@@ -455,12 +472,15 @@ int main(int argc, char **argv)
     glutInitWindowSize(512,512);	
     glutCreateWindow("Labirinto 3D");
     //glutFullScreen();
-    texture = LoadTexture( "//home//ci//Downloads//CG_ProjectFinal-Test--master//GET OUT!//foto1.bmp", 1600, 1000); // Deve-se colocar o caminho até a foto com 2 "\\".
-	if(texture==0){
-		printf("Erro ao carregar\n");
-	}else{
-		printf("Carregou!");
-	}	
+    	texture = LoadTexture( "//home//ci//Downloads//CG_ProjectFinal-Test--master//GET OUT!//foto1.bmp", 1600, 1000); // Carrega primeira textura (Chão).
+	texture2 = LoadTexture( "//home//ci//Downloads//CG_ProjectFinal-Test--master//GET OUT!//foto2.bmp", 1500, 1500);// Carrrega segunda textura (Parede).	
+
+		if(texture==0 || texture2 == 0){
+			printf("Erro ao carregar Imagem\n");
+		}else{
+			printf("Carregaram todas as imagens! \n");
+		}
+		
     Inicializa();
 
     glutDisplayFunc(display);
